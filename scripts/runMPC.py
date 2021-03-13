@@ -7,14 +7,13 @@ from os.path import abspath, dirname, join
 import gym
 import numpy as np
 import pandas as pd
-from filterpy.kalman import KalmanFilter
 from matplotlib import pyplot as plt
 
 from rye_flex_env.env import RyeFlexEnv
 from rye_flex_env.plotter import RyeFlexEnvEpisodePlotter
 from rye_flex_env.states import State
 
-from mpc import MPC_step
+from nonLinearMpc import MPC_step
 
 def main() -> None:
     root_dir = dirname(abspath(join(__file__, "../")))
@@ -31,7 +30,7 @@ def main() -> None:
     done = False
     # Initial state
     state = env._state.vector
-    N = 24
+    N = 30
     while not done:
         PV = data.loc[env._time:env._time + N*env._time_resolution, "pv_production"]
         W = data.loc[env._time:env._time + N*env._time_resolution, "wind_production"]
