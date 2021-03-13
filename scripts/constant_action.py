@@ -2,9 +2,7 @@
 Example of an  agent interacting with the environment for two episodes,
 where for the first episode the environment have a random initial state,
 and in the second episode, the initial state is partially defined.
-
 The agent is a simple (and naive agent) and only selects constant actions.
-
 """
 
 from datetime import datetime
@@ -28,10 +26,7 @@ class ConstantActionAgent:
         Since we are taking random action here, knowing the stat is not necessary.
         """
 
-        """
-        First entry = battery charge/discharge
-        and second entry = hydrogen charge/discharge
-        """
+        # Charge battery by 1 kWh/h and hydrogen 0 kWh/h
         return np.array([1, 0])
 
 
@@ -46,8 +41,6 @@ def main() -> None:
     # Example with random initial state
     info = {}
     done = False
-    # Initial state
-    state = env._state
 
     while not done:
 

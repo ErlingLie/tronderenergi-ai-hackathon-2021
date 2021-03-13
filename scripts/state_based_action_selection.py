@@ -1,10 +1,16 @@
 """
-The test script that will be used for evaluation of the "agents" performance
+Example of an  agent interacting with the environment for two episodes,
+where for the first episode the environment have a random initial state,
+and in the second episode, the initial state is partially defined.
+
+The agent is a simple (and naive agent) selecting constant
+ actions based on the total production.
+
 """
+
 from datetime import datetime
 from os.path import abspath, dirname, join
 
-import gym
 import numpy as np
 import pandas as pd
 
@@ -15,7 +21,7 @@ from rye_flex_env.states import State, Action
 
 class SimpleStateBasedAgent:
     """
-    An example agent which always returns a constant action
+    An agent which always returns a constant action
     """
 
     def get_action(self, state_vector: np.ndarray) -> np.ndarray:
@@ -41,31 +47,25 @@ class SimpleStateBasedAgent:
 
 def main() -> None:
     root_dir = dirname(abspath(join(__file__, "../")))
-    data = pd.read_csv(join(root_dir, "data/test.csv"), index_col=0, parse_dates=True)
+    data = pd.read_csv(join(root_dir, "data/train.csv"), index_col=0, parse_dates=True)
 
     env = RyeFlexEnv(data=data)
     plotter = RyeFlexEnvEpisodePlotter()
-
-    # Reset episode to feb 2021, and get initial state
-    state = env.reset(start_time=datetime(2021, 2, 1, 0, 0))
-
-    # INSERT YOUR OWN ALGORITHM HERE
     agent = SimpleStateBasedAgent()
 
+    # Get initial state
+    state = env.get_state_vector()
     info = {}
     done = False
 
     while not done:
-
-        # INSERT YOUR OWN ALGORITHM HERE
         action = agent.get_action(state)
 
         state, reward, done, info = env.step(action)
 
         plotter.update(info)
 
-    print(f"Your test score is: {info['cumulative_reward']} NOK")
-
+    print(f"Your score is: {info['cumulative_reward']} NOK")
     plotter.plot_episode()
 
 

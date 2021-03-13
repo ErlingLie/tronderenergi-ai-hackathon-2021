@@ -12,6 +12,8 @@ AI and optimization methods can be used to improve operational efficiency of mic
 
 To develop and test your system you will use a microgrid simulator included in this repository.
 
+The introduction presentation can be found [here](docs/AI-brAIn-hackaton-2021.pdf).
+
 ## Background
 
 The Rye microgrid is a pilot within the EU research project REMOTE. 
@@ -87,12 +89,12 @@ Technical data is found in the table below:
 | |Round trip efficiency|32.5%|
 
 
-## Data
+## Data description
 Data is stored in `data/train.csv`.
 It contains production and consumption measures and weather parameters for every hour of the training period.
 This data you can use in the development of the controller.
 
-Later in the event you will get `data/train.csv` for the test period used in final evaluation.
+Later in the event you will get `data/test.csv` for the test period used in final evaluation.
 It has the same parameters but for another period. 
 You should only use it in for running the evaluation script to get the final score.
 
@@ -126,6 +128,15 @@ Both files contain the following parameters (columns in the file):
 - `wind_speed_(2|10|50|100)m:ms` - wind speed in meters per second at 2, 10, 50 or 100 meters above ground.
 - `wind_dir_(2|10|50|100)m:d` - wind direction in degrees at 2, 10, 50 or 100 meters above ground.
 
+All timestamps in the data are stored in UTC (Coordinated Universal Time).
+
+## Guidelines for using the data
+
+- Consumption, PV production and wind production are only known the hour after it takes place. Future values of consumption and production **can't be used** in the control strategy.
+- Weather data are seen as weather forecast, thus you can include future values in your control strategy
+- Spot prices becomes available in vectors of 24 hours once a day. The forecasts for next day is available at 13:00. Thus, future prices can be included 12-25 hours ahead in time, depending on the hour of the day.
+
+For **development purposes only** you might want to assume that consumption and production observations are forecasts. This way part of the team can work on control policy and part on the forecasts. At the end replace observations with forecasts
 
 ## Development environment setup
 
