@@ -7,14 +7,13 @@ from os.path import abspath, dirname, join
 import gym
 import numpy as np
 import pandas as pd
-from filterpy.kalman import KalmanFilter
 from matplotlib import pyplot as plt
 
 from rye_flex_env.env import RyeFlexEnv
 from rye_flex_env.plotter import RyeFlexEnvEpisodePlotter
 from rye_flex_env.states import State
-
-from mpc import MPC_step
+from predictor import *
+from blockingMPC import MPC_step
 
 def main() -> None:
     root_dir = dirname(abspath(join(__file__, "../")))
@@ -31,16 +30,28 @@ def main() -> None:
     done = False
     # Initial state
     state = env._state.vector
-    N = 24
+    N = 28
     while not done:
         PV = data.loc[env._time:env._time + N*env._time_resolution, "pv_production"]
         W = data.loc[env._time:env._time + N*env._time_resolution, "wind_production"]
         C = data.loc[env._time:env._time + N*env._time_resolution, "consumption"]
         spot = data.loc[env._time:env._time + N*env._time_resolution, "spot_market_price"]
         #print("State t: ", state[0] - state[1] - state[2] + action[0] + action[1])
+
+        # C = data.loc[env._time - 47*env._time_resolution:env._time, "consumption"]
+        # Wind = data.loc[env._time:env._time + N*env._time_resolution, "wind_speed_50m:ms"]
+        # C_estim = [np.array(C[-1])]
+        # for i in range(N):
+        #     c = get_predicted_consumption(C[-48:])
+        #     C_estim.append(c)
+        #     C = np.concatenate([C, c])
+        # W = []
+        # for x in Wind:
+        #     W.append(get_predicted_wind_power(x))
+        # W = np.array(W)
+        # C = np.hstack(C_estim)
         action = MPC_step(N, state[3:6],PV[1:], W[1:], C[1:], spot[1:] )
         state, reward, done, info = env.step(action)
-
         #print("State t+1: ", state[0] - state[1] - state[2] + action[0] + action[1])
         print(env._time)
         plotter.update(info)

@@ -9,10 +9,11 @@ def generateIQMatrics():
     C = np.zeros((4,7))
     C[:,3:] = -np.eye(4)
 
-    A = np.hstack([A, B])
-    A = np.vstack([A, C])
 
-    b = np.array([500, 0, 1670, 0, 0, 0, 0, 0])
+    A = np.hstack([A, B])
+    A = np.vstack([A, C, -C])
+
+    b = np.array([500, 0, 1670, 0, 0, 0, 0, 0, 400, 400, 55, 100])
     return A, b
 
 def genFullIQMatrix(N):
