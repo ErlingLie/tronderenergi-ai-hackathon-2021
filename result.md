@@ -39,3 +39,9 @@ Your test score is: 11179.221129477675 NOK
 ### Quadprog, real values, N = 30
 Your test score is: 11174.88459604846 NOK
 
+
+### Quadprog, real values, N = 30
+Your test score is: 11174.88459604846 NOK
+
+### Quadprog, estimated all stochastic values, new wind prediction, N = 28
+Your test score is: 15921.656 NOK
