@@ -20,13 +20,15 @@ def get_predicted_solar_power(x):
     y = -A[:,1:]@x
     return y
 
+
 def get_predicted_wind_power_stupid(wind_speed_vec, last_m,N):
     power_table = np.array([0,0,0,0,3.5,15,33,55,82,115,150,180,208,218,224,225,225,225,225,225,225,225,225,225,225,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
 
-    a = []
+    
     this = last_m
-    for i in range(N):
-        this = this + 5*(wind_speed_vec[i]-wind_speed_vec[i]
+    a = [this]
+    for i in range(1,N):
+        this = this + 5*(wind_speed_vec[i]-wind_speed_vec[i-1])
         a.append(this)
 
-    return
+    return np.array(a)

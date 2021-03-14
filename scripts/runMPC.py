@@ -13,8 +13,8 @@ from rye_flex_env.env import RyeFlexEnv
 from rye_flex_env.plotter import RyeFlexEnvEpisodePlotter
 from rye_flex_env.states import State
 from predictor import *
-# from mpc import MPC_step
-from nonLinearMpc import MPC_step
+from mpc import MPC_step
+# from nonLinearMpc import MPC_step
 
 def main() -> None:
     root_dir = dirname(abspath(join(__file__, "../")))
@@ -54,14 +54,14 @@ def main() -> None:
             pv = get_predicted_solar_power(PV[-48:])
             PV_estim.append(pv)
             PV = np.concatenate([PV, pv])
-        W = []
-        for x in Wind:
-            W.append(get_predicted_wind_power(x))
-        W = np.array(W)
+        # W = []
+        # for x in Wind:
+        #     W.append(get_predicted_wind_power(x))
+        # W = np.array(W)
+        W = get_predicted_wind_power_stupid(Wind,Wind_prod_last,N)
         C = np.hstack(C_estim)
         action = MPC_step(N, state[3:6],PV[1:], W[1:], C[1:], spot[1:] )
         state, reward, done, info = env.step(action)
-        print(W.shape)
         print(env._time)
         plotter.update(info)
 
