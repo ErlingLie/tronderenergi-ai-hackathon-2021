@@ -1,0 +1,2 @@
+### Non-linear, estimated W and C, N = 20
+Your test score is: 17983.090603168443 NOK
