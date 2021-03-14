@@ -13,3 +13,20 @@ def get_predicted_wind_power(wind_speed):
     power_table = np.array([0,0,0,0,3.5,15,33,55,82,115,150,180,208,218,224,225,225,225,225,225,225,225,225,225,225,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
 
     return power_table[int(wind_speed)]
+
+def get_predicted_solar_power(x):
+    assert(len(x) == 48), f"x is wrong length, got {x.shape}"
+    A = scipy.io.loadmat("pv_ARmodel.mat")["pv_AR_model"]
+    y = -A[:,1:]@x
+    return y
+
+def get_predicted_wind_power_stupid(wind_speed_vec, last_m,N):
+    power_table = np.array([0,0,0,0,3.5,15,33,55,82,115,150,180,208,218,224,225,225,225,225,225,225,225,225,225,225,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+
+    a = []
+    this = last_m
+    for i in range(N):
+        this = this + 5*(wind_speed_vec[i]-wind_speed_vec[i]
+        a.append(this)
+
+    return

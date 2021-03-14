@@ -90,38 +90,48 @@ def get_predicted_consumption(x):
     y = -A[:,1:]@x
     return y
 
-def test_consumption():
-    data = pd.read_csv("data/train.csv", index_col=0, parse_dates=True)
+def test_ARmodel(model_of):
+    data = pd.read_csv("data/test.csv", index_col=0, parse_dates=True)
 
     time_min = data.index.min()
     time_max = data.index.max()
     env = RyeFlexEnv(data=data)
 
-    c = data.loc[time_min:time_max, "consumption"]
+    c = data.loc[time_min:time_max, model_of]
     estim = []
     y = []
-    for i in range(400, 400 +24*5):
-        estim.append(get_predicted_consumption(c[i:i+48]))
+    days = 10
+    for i in range(400, 400 +24*days):
+        if model_of == "consumption":
+            estim.append(get_predicted_consumption(c[i:i+48]))
+        if model_of == "pv_production":
+            estim.append(get_predicted_solar_power(c[i:i+48]))
         y.append(c[i + 48])
-    plt.plot(np.arange(0,24*5), estim, 'r', label="estimated")
-    plt.plot(np.arange(0,24*5), y, 'g', label="real")
+    plt.plot(np.arange(0,24*days), estim, 'r', label="estimated")
+    plt.plot(np.arange(0,24*days), y, 'g', label="real")
     plt.legend()
     plt.show()
 
 
 def get_predicted_wind_power(wind_speed):
-    power_table = np.array([0,0,0,0,3.5,15,33,55,82,115,150,180,208,218,224,225,225,225,225,225,225,225,225,225,225,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+    power_table = np.array([0,0,0,0,3.5,15,33,55,82,115,150,180,208,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
 
     return power_table[int(wind_speed)]
 
+def get_predicted_solar_power(x):
+    assert(len(x) == 48), f"x is wrong length, got {x.shape}"
+    A = scipy.io.loadmat("pv_ARmodel.mat")["pv_AR_model"]
+    y = -A[:,1:]@x
+    return y
+
 def test_predicted_wind_power():
     #root_dir = dirname(abspath(join(__file__, "./")))
-    data = pd.read_csv( "data/train.csv", index_col=0, parse_dates=True)
+    data = pd.read_csv( "data/test.csv", index_col=0, parse_dates=True)
 
     time = data.index.min()
     
-    time_delta = timedelta(hours = 1)
-    timeMax = time + 24*time_delta
+    time_delta = timedelta(days = 1)
+    timeMax = time + time_delta*365
     w1 = np.array(data.loc[time :timeMax, "wind_speed_2m:ms"])
     w2 = data.loc[time :timeMax, "wind_speed_10m:ms"]
     w3 = data.loc[time :timeMax, "wind_speed_50m:ms"]
@@ -129,18 +139,19 @@ def test_predicted_wind_power():
     P = np.array(data.loc[time :timeMax, "wind_production"])
 
     estim = []
-    for data in w3:
+    for data in w4:
         estim.append(get_predicted_wind_power(data))
 
 
-    plt.plot(np.arange(w3.shape[0]), w3, label='w')
-    plt.plot(np.arange(w3.shape[0]), P, label='P')
-    plt.plot(np.arange(w3.shape[0]), estim, label = 'e')
+    plt.plot(np.arange(w3.shape[0]), w4, label='Wind')
+    plt.plot(np.arange(w3.shape[0]), P, label='Power')
+    plt.plot(np.arange(w3.shape[0]), estim, label = 'Estimated power')
     plt.legend()
     plt.show()
 
 
 if __name__ == "__main__":
     # test_episodes()
-    test_predicted_wind_power()
+    # test_predicted_wind_power()
+    test_ARmodel("pv_production")
 
