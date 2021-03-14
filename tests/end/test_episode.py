@@ -112,6 +112,17 @@ def test_ARmodel(model_of):
     plt.legend()
     plt.show()
 
+def get_predicted_wind_power_stupid(wind_speed_vec, last_m,N):
+    power_table = np.array([0,0,0,0,3.5,15,33,55,82,115,150,180,208,218,224,225,225,225,225,225,225,225,225,225,225,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+
+    
+    this = last_m
+    a = [this]
+    for i in range(1,N):
+        this = this + 5*(wind_speed_vec[i]-wind_speed_vec[i-1])
+        a.append(this)
+
+    return np.array(a)
 
 def get_predicted_wind_power(wind_speed):
     power_table = np.array([0,0,0,0,3.5,15,33,55,82,115,150,180,208,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
@@ -127,7 +138,7 @@ def get_predicted_solar_power(x):
 def test_predicted_wind_power():
     #root_dir = dirname(abspath(join(__file__, "./")))
     data = pd.read_csv( "data/test.csv", index_col=0, parse_dates=True)
-
+    env = RyeFlexEnv(data=data)
     time = data.index.min()
     
     time_delta = timedelta(days = 1)
@@ -138,9 +149,11 @@ def test_predicted_wind_power():
     w4 = data.loc[time :timeMax, "wind_speed_100m:ms"]
     P = np.array(data.loc[time :timeMax, "wind_production"])
 
-    estim = []
-    for data in w4:
-        estim.append(get_predicted_wind_power(data))
+    # estim = []
+    # for data in w4:
+    #     estim.append(get_predicted_wind_power(data))
+    Wind_prod_last = data.loc[env._time, "wind_production"]
+    estim = get_predicted_wind_power_stupid(w1,Wind_prod_last,28)
 
 
     plt.plot(np.arange(w3.shape[0]), w4, label='Wind')
@@ -152,6 +165,6 @@ def test_predicted_wind_power():
 
 if __name__ == "__main__":
     # test_episodes()
-    # test_predicted_wind_power()
-    test_ARmodel("pv_production")
+    test_predicted_wind_power()
+    # test_ARmodel("pv_production")
 
