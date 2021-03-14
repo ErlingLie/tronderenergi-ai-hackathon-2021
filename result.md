@@ -45,3 +45,7 @@ Your test score is: 11174.88459604846 NOK
 
 ### Quadprog, estimated all stochastic values, new wind prediction, N = 28
 Your test score is: 15921.656 NOK
+
+
+### Night and day
+Your test score is: 13421.626821228467 NOK
